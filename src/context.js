@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
-import { pizzaData } from './data';
+// import { pizzaData } from './data';
 
 const PizzaContext = React.createContext();
 
 class PizzaProvider extends Component {
 	state = {
-		pizzas: pizzaData,
+		pizzas: [],
 		cart: [],
 		cartSubTotal: 0,
 		cartTotal: 0,
 		cartTax: 0,
 	};
 
-	componentDidMount() {
+	componentWillMount() {
 		this.setPizzas();
 	}
 
-	setPizzas = () => {
+	setPizzas = async () => {
+		let pizzaData = [];
+		await fetch('http://localhost:5000/pizza-data')
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("API DATA",data);
+				pizzaData = data;
+			})
+			.catch((err) => console.log("Error in Fetching Data", err));
 		let pizzas = [];
 		pizzaData.forEach((item) => {
 			const singleItem = { ...item };
@@ -150,6 +158,7 @@ class PizzaProvider extends Component {
 	};
 
 	render() {
+
 		return (
 			<PizzaContext.Provider
 				value={{
